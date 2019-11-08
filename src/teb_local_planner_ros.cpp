@@ -58,14 +58,15 @@
 #include "g2o/solvers/cholmod/linear_solver_cholmod.h"
 
 
-// register this planner both as a BaseLocalPlanner and as a MBF's CostmapController plugin
+// register this planner both as a BaseLocalPlanner and as a MBF's CostmapController plugin  
+// bzj add 注册插件 BaseLocalPlanner 和 CostmapController
 PLUGINLIB_EXPORT_CLASS(teb_local_planner::TebLocalPlannerROS, nav_core::BaseLocalPlanner)
 PLUGINLIB_EXPORT_CLASS(teb_local_planner::TebLocalPlannerROS, mbf_costmap_core::CostmapController)
 
 namespace teb_local_planner
 {
   
-
+//构造函数
 TebLocalPlannerROS::TebLocalPlannerROS() : costmap_ros_(NULL), tf_(NULL), costmap_model_(NULL),
                                            costmap_converter_loader_("costmap_converter", "costmap_converter::BaseCostmapToPolygons"),
                                            dynamic_recfg_(NULL), custom_via_points_active_(false), goal_reached_(false), no_infeasible_plans_(0),
@@ -73,16 +74,18 @@ TebLocalPlannerROS::TebLocalPlannerROS() : costmap_ros_(NULL), tf_(NULL), costma
 {
 }
 
-
+//析构函数
 TebLocalPlannerROS::~TebLocalPlannerROS()
 {
 }
 
+//动态调参
 void TebLocalPlannerROS::reconfigureCB(TebLocalPlannerReconfigureConfig& config, uint32_t level)
 {
   cfg_.reconfigure(config);
 }
 
+//初始化步骤
 void TebLocalPlannerROS::initialize(std::string name, tf2_ros::Buffer* tf, costmap_2d::Costmap2DROS* costmap_ros)
 {
   // check if the plugin is already initialized
@@ -191,7 +194,7 @@ void TebLocalPlannerROS::initialize(std::string name, tf2_ros::Buffer* tf, costm
 }
 
 
-
+//设置全局规划路径
 bool TebLocalPlannerROS::setPlan(const std::vector<geometry_msgs::PoseStamped>& orig_global_plan)
 {
   // check if plugin is initialized
@@ -214,7 +217,7 @@ bool TebLocalPlannerROS::setPlan(const std::vector<geometry_msgs::PoseStamped>& 
   return true;
 }
 
-
+//计算导航速度
 bool TebLocalPlannerROS::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
 {
   std::string dummy_message;
@@ -225,6 +228,7 @@ bool TebLocalPlannerROS::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
   return outcome == mbf_msgs::ExePathResult::SUCCESS;
 }
 
+//计算导航速度
 uint32_t TebLocalPlannerROS::computeVelocityCommands(const geometry_msgs::PoseStamped& pose,
                                                      const geometry_msgs::TwistStamped& velocity,
                                                      geometry_msgs::TwistStamped &cmd_vel,
@@ -432,7 +436,7 @@ uint32_t TebLocalPlannerROS::computeVelocityCommands(const geometry_msgs::PoseSt
   return mbf_msgs::ExePathResult::SUCCESS;
 }
 
-
+//判断目标到达
 bool TebLocalPlannerROS::isGoalReached()
 {
   if (goal_reached_)
